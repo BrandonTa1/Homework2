@@ -8,7 +8,7 @@ import axios from "axios";
 
 function App() {
 
-  const [students, setStudents] = useState([{"name":"brandon", "id":"5", "points":"10"}])
+  const [students, setStudents] = useState([{}])
 
   useEffect(() => {
     fetch("/list").then(
