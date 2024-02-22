@@ -49,6 +49,7 @@ def addrec():
             msg = "Error in the INSERT"
 
         finally:
+            get_data()
             con.close()
             # Send the transaction message to result.html
             #return render_template('result.html',msg=msg)
@@ -150,6 +151,26 @@ def delete():
             con.close()
             # Send the transaction message to the front-end
             return jsonify({'message': msg})
+
+@app.route('/sendUpdate')
+def get_data():
+    print("test1")
+    con = sqlite3.connect("database.db")
+    con.row_factory = sqlite3.Row
+
+    cur = con.cursor()
+    cur.execute("SELECT rowid, * FROM students")
+
+    rows = cur.fetchall()
+    students_list = [{'name': row['name'], 'id': row['id'], 'points': row['points']} for row in rows]
+    con.close()
+    # Send the results of the SELECT to the list.html page
+    return jsonify(students_list)
+    # Your logic to fetch data
+    #data = {"message": "Data fetched successfully", "content": [1, 2, 3, 4, 5]}
+    
+    # Sending the message along with the data in JSON format
+    #return jsonify(data)
 
 if __name__ == "__main__":
     app.run(debug=True)

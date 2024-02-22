@@ -2,14 +2,12 @@ import React, { useState } from 'react';
 import axios from "axios";
 
 const AddStudent = ({handleRefreshStudents}) => {
-  // Step 2: Use state to manage form data
   const [formData, setFormData] = useState({
     'name': '',
     ID: '',
     points: '',
   });
 
-  // Step 3: Event handler to update form data
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -18,12 +16,7 @@ const AddStudent = ({handleRefreshStudents}) => {
     });
   };
 
-  // // Step 4: Handle form submission
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   // Add your logic for handling the form data (e.g., sending it to a server)
-  //   console.log('Form submitted:', formData);
-  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -37,44 +30,47 @@ const AddStudent = ({handleRefreshStudents}) => {
   };
 
   return (
-    <div>
-      <h1>Add Student</h1>
-      {/* Step 1: Define the form elements */}
-      <form onSubmit={handleSubmit} >
-        <label>
-          Name:
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleInputChange}
-          />
-        </label>
-        <br />
-        <label>
-          ID:
-          <input
-            type="ID"
-            name="ID"
-            value={formData.ID}
-            onChange={handleInputChange}
-          />
-        </label>
-        <br />
-        <label>
-          Points:
-          <input
-            type="points"
-            name="points"
-            value={formData.points}
-            onChange={handleInputChange}
-          />
-        </label>
-        {/* Add more form elements as needed */}
-        <br />
-        <button type="submit">Submit</button>
-      </form>
-    </div>
+
+      <div>
+        
+
+        <h1>Add Student</h1>
+        <form onSubmit={handleSubmit} >
+          <label>
+            Name:
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleInputChange}
+            />
+          </label>
+          <br />
+          <label>
+            ID:
+            <input
+              type="ID"
+              name="ID"
+              value={formData.ID}
+              onChange={handleInputChange}
+            />
+          </label>
+          <br />
+          <label>
+            Points:
+            <input
+              type="points"
+              name="points"
+              value={formData.points}
+              onChange={handleInputChange}
+            />
+          </label>
+          <br />
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+
+
   );
 };
 
