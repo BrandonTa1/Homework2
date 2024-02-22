@@ -13,35 +13,37 @@ def home():
 
 
 # Route to add a new record (INSERT) student data to the database
-@app.route("/add", methods = ['POST', 'GET'])
+@app.route("/add", methods=['POST', 'GET'])
 def addrec():
     # Data will be available from POST submitted by the form
     if request.method == 'POST':
-        print("add post \n\n \n \n \n \n")
-        print(request.get_json())
         try:
             data = request.get_json()
             nm = data['name']
             ID = data['ID']
             points = data['points']
 
-            # Connect to SQLite3 database and execute the INSERT
+            # Check if the ID already exists in the database
             with sqlite3.connect('database.db') as con:
                 cur = con.cursor()
-                cur.execute("INSERT INTO students (name, ID, points) VALUES (?,?,?)",(nm, ID, points))
+                cur.execute("SELECT ID FROM students WHERE ID=?", (ID,))
+                existing_id = cur.fetchone()
 
-                con.commit()
-                msg = "Record successfully added to database"
-        except:
+                if existing_id:
+                    msg = f"Record with ID {ID} already exists in the database"
+                else:
+                    # Perform the INSERT operation only if the ID doesn't exist
+                    cur.execute("INSERT INTO students (name, ID, points) VALUES (?,?,?)", (nm, ID, points))
+                    con.commit()
+                    msg = "Record successfully added to the database"
+        except Exception as e:
             con.rollback()
-            msg = "Error in the INSERT"
-
+            msg = f"Error in the INSERT: {str(e)}"
         finally:
-            get_data()
             con.close()
-            # Send the transaction message to result.html
-            #return render_template('result.html',msg=msg)
-            return jsonify({'message': msg}), 201
+            get_data()  # Refresh the data after adding or rejecting the entry
+            # Send the transaction message to the front-end
+            return jsonify({'message': msg})
 
 # Route to SELECT all data from the database and display in a table      
 @app.route('/list')
