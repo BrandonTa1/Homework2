@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from "axios";
 
-const AddStudent = () => {
+const AddStudent = ({handleRefreshStudents}) => {
   // Step 2: Use state to manage form data
   const [formData, setFormData] = useState({
     'name': '',
@@ -31,13 +31,16 @@ const AddStudent = () => {
     } catch (err) {
       console.log(err);
     }
+    // if (e) {
+    //   e.handleRefreshStudents();
+    // }
   };
 
   return (
     <div>
       <h1>Add Student</h1>
       {/* Step 1: Define the form elements */}
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} >
         <label>
           Name:
           <input

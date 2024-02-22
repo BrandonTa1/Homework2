@@ -20,12 +20,13 @@ function App() {
     )
   }, [])
 
-  const handleClick = async (e) => {
+  const handleRefreshStudents = async (e) => {
     e.preventDefault();
-    axios.get('list')
+    axios.get('/list')
       .then(response => {
         // Handle successful response
         console.log('Data:', response.data);
+        setStudents(response.data)
       })
       .catch(error => {
         // Handle error
@@ -36,11 +37,11 @@ function App() {
   return (
     
     <div className="App">
-      <AddStudent />
-      <EditStudent/>
-      <DeleteStudent />
+      <AddStudent handleRefreshStudents={handleRefreshStudents} />
+      <EditStudent handleRefreshStudents={handleRefreshStudents} />
+      <DeleteStudent handleRefreshStudents={handleRefreshStudents} />
       <h1>Students</h1>
-      <button onClick={handleClick}>
+      <button onClick={handleRefreshStudents}>
         Refresh
       </button>
       <table>

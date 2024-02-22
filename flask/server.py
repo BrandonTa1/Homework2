@@ -72,79 +72,84 @@ def list():
     # Send the results of the SELECT to the list.html page
     return jsonify(students_list)
 
-# Route that will SELECT a specific row in the database then load an Edit form 
-@app.route("/edit", methods=['POST','GET'])
-def edit():
-    if request.method == 'POST':
-        try:
-            # Use the hidden input value of id from the form to get the rowid
-            id = request.form['id']
-            # Connect to the database and SELECT a specific rowid
-            con = sqlite3.connect("database.db")
-            con.row_factory = sqlite3.Row
+# # Route that will SELECT a specific row in the database then load an Edit form 
+# @app.route("/edit", methods=['POST','GET'])
+# def edit():
+#     if request.method == 'POST':
+#         try:
+#             # Use the hidden input value of id from the form to get the rowid
+#             id = request.form['id']
+#             # Connect to the database and SELECT a specific rowid
+#             con = sqlite3.connect("database.db")
+#             con.row_factory = sqlite3.Row
 
-            cur = con.cursor()
-            cur.execute("SELECT rowid, * FROM students WHERE rowid = " + id)
+#             cur = con.cursor()
+#             cur.execute("SELECT rowid, * FROM students WHERE rowid = " + id)
 
-            rows = cur.fetchall()
-        except:
-            id=None
-        finally:
-            con.close()
-            # Send the specific record of data to edit.html
-            return render_template("edit.html",rows=rows)
+#             rows = cur.fetchall()
+#         except:
+#             id=None
+#         finally:
+#             con.close()
+#             # Send the specific record of data to edit.html
+#             return render_template("edit.html",rows=rows)
 
 # Route used to execute the UPDATE statement on a specific record in the database
-@app.route("/editrec", methods=['POST','GET'])
+@app.route("/edit", methods=['POST','GET'])
 def editrec():
     # Data will be available from POST submitted by the form
     if request.method == 'POST':
         try:
+            data = request.get_json()
+            nm = data['name']
+            ID = data['ID']
+            points = data['points']
             # Use the hidden input value of id from the form to get the rowid
-            rowid = request.form['rowid']
-            nm = request.form['nm']
-            addr = request.form['add']
-            city = request.form['city']
-            zip = request.form['zip']
+            # rowid = request.form['rowid']
+            # nm = request.form['nm']
+            # addr = request.form['add']
+            # city = request.form['city']
+            # zip = request.form['zip']
 
             # UPDATE a specific record in the database based on the rowid
             with sqlite3.connect('database.db') as con:
                 cur = con.cursor()
-                cur.execute("UPDATE students SET name='"+nm+"', addr='"+addr+"', city='"+city+"', zip='"+zip+"' WHERE rowid="+rowid)
+                cur.execute("UPDATE students SET name='"+nm+"', points='"+points+"' WHERE ID="+ID)
 
                 con.commit()
                 msg = "Record successfully edited in the database"
         except:
             con.rollback()
-            msg = "Error in the Edit: UPDATE students SET name="+nm+", addr="+addr+", city="+city+", zip="+zip+" WHERE rowid="+rowid
+            msg = "Error in the Edit"
 
         finally:
             con.close()
             # Send the transaction message to result.html
-            return render_template('result.html',msg=msg)
+            return jsonify({'message': msg})
 
 # Route used to DELETE a specific record in the database    
 @app.route("/delete", methods=['POST','GET'])
 def delete():
     if request.method == 'POST':
         try:
-             # Use the hidden input value of id from the form to get the rowid
-            rowid = request.form['id']
+            # Use the hidden input value of ID from the form to get the rowid
+            data = request.get_json()
+            ID = data.get('ID')
+
             # Connect to the database and DELETE a specific record based on rowid
             with sqlite3.connect('database.db') as con:
-                    cur = con.cursor()
-                    cur.execute("DELETE FROM students WHERE rowid="+rowid)
+                cur = con.cursor()
+                cur.execute("DELETE FROM students WHERE ID=?", (ID,))
 
-                    con.commit()
-                    msg = "Record successfully deleted from the database"
-        except:
+                con.commit()
+                msg = "Record successfully deleted from the database"
+        except Exception as e:
             con.rollback()
-            msg = "Error in the DELETE"
-
+            msg = f"Error in the DELETE: {str(e)}"
         finally:
             con.close()
-            # Send the transaction message to result.html
-            return render_template('result.html',msg=msg)
+            # Send the transaction message to the front-end
+            return jsonify({'message': msg})
 
 if __name__ == "__main__":
     app.run(debug=True)

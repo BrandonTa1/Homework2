@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from "axios";
 
 const EditStudent = () => {
   // Step 2: Use state to manage form data
@@ -18,10 +19,13 @@ const EditStudent = () => {
   };
 
   // Step 4: Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add your logic for handling the form data (e.g., sending it to a server)
-    console.log('Form submitted:', formData);
+    try {
+      await axios.post("/edit", formData);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (

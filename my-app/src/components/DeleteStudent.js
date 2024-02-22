@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
+import axios from "axios";
 
 const DeleteStudent = () => {
   // Step 2: Use state to manage form data
   const [formData, setFormData] = useState({
-    name: '',
     ID: '',
-    points: '',
   });
 
   // Step 3: Event handler to update form data
@@ -18,10 +17,13 @@ const DeleteStudent = () => {
   };
 
   // Step 4: Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add your logic for handling the form data (e.g., sending it to a server)
-    console.log('Form submitted:', formData);
+    try {
+      await axios.post("/delete", formData);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
@@ -29,15 +31,6 @@ const DeleteStudent = () => {
       <h1>Delete Student</h1>
       {/* Step 1: Define the form elements */}
       <form onSubmit={handleSubmit}>
-        <label>
-          Name:
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleInputChange}
-          />
-        </label>
         <br />
         <label>
           ID:
@@ -45,16 +38,6 @@ const DeleteStudent = () => {
             type="ID"
             name="ID"
             value={formData.ID}
-            onChange={handleInputChange}
-          />
-        </label>
-        <br />
-        <label>
-          Points:
-          <input
-            type="points"
-            name="points"
-            value={formData.points}
             onChange={handleInputChange}
           />
         </label>
