@@ -13,27 +13,27 @@ def home():
 
 
 # Route to add a new record (INSERT) student data to the database
-@app.route("/add", methods=['POST', 'GET'])
+@app.route("/addUser", methods=['POST', 'GET'])
 def addrec():
     # Data will be available from POST submitted by the form
     if request.method == 'POST':
         try:
             data = request.get_json()
-            nm = data['name']
-            ID = data['ID']
-            points = data['points']
+            userName = data['userName']
+            email = data['email']
+            password = data['password']
 
-            # Check if the ID already exists in the database
+            # Check if the userName already exists in the database
             with sqlite3.connect('database.db') as con:
                 cur = con.cursor()
-                cur.execute("SELECT ID FROM students WHERE ID=?", (ID,))
+                cur.execute("SELECT userName FROM user WHERE userName=?", (userName,))
                 existing_id = cur.fetchone()
 
                 if existing_id:
-                    msg = f"Record with ID {ID} already exists in the database"
+                    msg = f"Record with userName {userName} already exists in the database"
                 else:
                     # Perform the INSERT operation only if the ID doesn't exist
-                    cur.execute("INSERT INTO students (name, ID, points) VALUES (?,?,?)", (nm, ID, points))
+                    cur.execute("INSERT INTO user (userName, email, password) VALUES (?,?,?)", (userName, email, password))
                     con.commit()
                     msg = "Record successfully added to the database"
         except Exception as e:
